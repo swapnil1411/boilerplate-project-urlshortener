@@ -22,16 +22,19 @@ let counter = 0;
 const urlDatabase = [];
 app.post('/api/shorturl', (req, res) => {
   const  longUrl  = req.body.url;
-  const urlPattern = /^https?:\/\/www\..+\..+/;
+  const urlPattern = /^(https?):\/\/([a-zA-Z0-9.-]+\.[a-zA-Z]{2,6})(\/\S*)?$/;
+
 
   if (!urlPattern.test(longUrl)) {
+    console.log("url", longUrl);
     return res.json({"error":"Invalid URL"});
   }
 
   const shortCode = counter++;
   urlDatabase[shortCode] = longUrl;
-  const shortUrl = `${req.protocol}://${req.get('host')}/api/shorturl/${shortCode}`;
-  res.json({ shortUrl });
+  const short_url = `${shortCode}`;
+  const original_url = longUrl;
+  res.json({ original_url,short_url });
 });
 
 app.get('/api/shorturl/:shortCode', (req, res) => {
